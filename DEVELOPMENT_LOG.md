@@ -37,3 +37,9 @@ Test environment: Windows 11 Pro 26H2, OS build `26300.9711`. Enumeration counts
 ### Publication
 
 Created a GitHub fork under `zzgzhzz-star/ViVeTool_GUI`, preserving upstream attribution/history. Prepared bilingual README/development logs, source snapshots, a runtime ZIP, and SHA-256 checksums. The pinned ViVe source is added under `ViVe/`, while GUI source remains in its upstream directories; the layout adaptation does not change feature behavior. Published binaries are local, unsigned maintenance builds, not an upstream certification or an official Microsoft package.
+
+## 2026-11-03 — publication verification
+
+The repository layout was rebuilt successfully with the pinned ViVe source inside the fork. Both GUI/scanner and CLI compiled from that layout. The final runtime directory passed the same 10 parser cases and Chinese-resource checks. A new read-only run enumerated 4,513 runtime and 4,517 boot configurations; its change stamp remained unchanged. The different runtime count reflects machine state at this later check, not a fixed catalogue size. The machine-readable result is included as validation.json in the release assets.
+
+Source files and documentation are committed directly through GitHub's upload interface. No repository-writing import workflow was added. The runtime and full source archives are published as release attachments; upstream attribution and licenses remain intact.

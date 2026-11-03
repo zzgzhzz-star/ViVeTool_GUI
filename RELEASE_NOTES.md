@@ -31,3 +31,6 @@ Validated Chinese startup and 10 parser cases on Windows 11 Pro 26H2 / 26300.971
 Forked from [PeterStrick/ViVeTool-GUI](https://github.com/PeterStrick/ViVeTool-GUI), using [thebookisclosed/ViVe](https://github.com/thebookisclosed/ViVe), [riverar/mach2](https://github.com/riverar/mach2), and upstream translations/icons. Original GPLv3 notices are retained. Third-party components, including Telerik controls, retain their own licenses. This is an unsigned, unofficial build.
 
 fork 自上述 GUI 项目，使用 ViVe、mach2 及上游翻译和图标。保留原 GPLv3 声明；Telerik 等第三方组件遵循各自许可。本构建非官方且未签名。
+
+Publication verification / 发布前复核 (2026-11-03): repository-layout rebuild passed; 10 parser cases passed; 4,513 runtime and 4,517 boot records read, configuration stamp unchanged. See validation.json. / 仓库布局重编译及 10 项解析检查通过，读取 4,513／4,517 条配置，前后配置标记一致，详见 validation.json。
+
