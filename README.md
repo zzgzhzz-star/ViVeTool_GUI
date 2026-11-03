@@ -1,80 +1,68 @@
-> [!CAUTION]
-> # DEPRECATION NOTICE
->
-> This Project is unfortunately deprecated due to number of colliding factors, like me having less Motivation and Time to work on ViVeTool GUI; and the State of Windows deterioating on a day to day basis, which made me switch away from Windows to Linux full time and permanently
->
-> While it hurts me to stop working on a Project that garnered this much attention and Stars, it is better to officially declare it deprecated and unmaintained, instead of just denying the facts
->
-> It was really fun working and gaining experience while developing ViVeTool GUI, if someone else wants to carry on with the Project feel free to create a GitHub Issue to discuss it
+﻿# ViVeTool GUI — maintained fork
 
-![GitHub all releases](https://img.shields.io/github/downloads/peterstrick/vivetool-gui/total)
-![GitHub License](https://img.shields.io/github/license/peterstrick/vivetool-gui)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/peterstrick/vivetool-gui)
-[![](https://dcbadge.vercel.app/api/server/8vDFXEucp2?style=flat)](https://discord.gg/8vDFXEucp2)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=PeterStrick_ViVeTool-GUI&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=PeterStrick_ViVeTool-GUI)
-[![Translation](https://weblate.rawrr.dev/widgets/vivetool-gui/-/svg-badge.svg)](https://weblate.rawrr.dev/engage/vivetool-gui)
+[简体中文](README.zh-CN.md) · [Development log](DEVELOPMENT_LOG.md) · [中文开发日志](DEVELOPMENT_LOG.zh-CN.md) · [Downloads](https://github.com/zzgzhzz-star/ViVeTool_GUI/releases)
 
-# ViVeTool GUI <img src="/images/icons8-advertisement-page-96.png" alt="ViVeTool GUI Logo" width="32"/> 
-### Windows Feature Control GUI based on ViVeTool
+An **unofficial maintenance fork** of [PeterStrick/ViVeTool-GUI](https://github.com/PeterStrick/ViVeTool-GUI), built against the updated [ViVe / ViVeTool core](https://github.com/thebookisclosed/ViVe). This is not an official release from either upstream author or Microsoft.
 
-## What is ViVeTool GUI?
-ViVeTool GUI let´s you easily enable, disable and search for new hidden Features in Windows Insider Builds, with the use of a Button and a pretty UI.
+## Version and provenance
 
-## Disclaimer.
-### No one, including me / [PeterStrick](https://github.com/PeterStrick), [the creators of ViVe and ViVeTool](https://github.com/thebookisclosed/ViVe) or [the creators of mach2](https://github.com/riverar/mach2) are responsible for any damage or unintended side effects, this program might cause to your computer, by changing the Windows Feature Store. Use this program at your own risk.
+| Component | Version / source revision |
+|---|---|
+| This GUI build | `1.7.0.1`, x64 |
+| GUI base | upstream `v1.7-Testing`, `944b78ca16ede25d39f926d8994861d7aa95abcf` |
+| ViVe core | `2025.3.10.0`, upstream `master`, `3f8c6a3425983412da1e8b26cd757c3aa17b3f25` |
+| Bundled ViVeTool CLI | `0.3.4` |
+| Upstream snapshot checked | 2026-11-02 |
 
-## How to use it?
-Using it is simple, 
-Either:
+The original GUI repository is archived. The source revisions above, rather than a claim of a new upstream release, identify exactly what this fork uses. Both upstream branches and their history are retained in this GitHub fork.
 
-1. Select the Build for which you want to enable or disable features for.
-2. Wait for it to load in, open one of the Groups by pressing the Arrow, and select the Feature that you are looking for.
-3. Press on Perform Action and perform your desired action for the entered feature ID.
+## What changed
 
-<img width="511" height="355" src="/images/Method1.gif" alt="Image showing you how to perform Method 1" />
+- Build the GUI against the current ViVe source project instead of the bundled 2023 core DLL.
+- Include a separately compiled ViVeTool CLI and the upstream feature dictionary.
+- Default to Simplified Chinese while retaining upstream language resources and the language selector.
+- Fix `IndexOutOfRangeException` in `PopulateBuildComboBox()` by parsing build filenames independently of repository directory depth.
+- Fix Release compilation, empty feature lists, dependency binding, and disposal of an uninitialized Sentry client.
+- Correct variant updates so a variant number is not also written as an external payload.
+- Disable the archived upstream automatic updater and the retired comments database connection at startup.
+- Add a startup error log, a build script, and read-only regression checks.
 
+## Download and run
 
----
+Download the x64 runtime ZIP from [Releases](https://github.com/zzgzhzz-star/ViVeTool_GUI/releases), **extract the entire archive**, and run `ViVeTool_GUI.exe` as administrator. Keep the DLLs, configuration files, language folders, and runtime directories together. The `CLI` directory contains `ViVeTool.exe`.
 
-Or:
-1. Press on "Manually change a Feature" (F12)
-2. Enter a Feature ID
-3. Press on Perform Action and perform your desired action for the selected feature.
+This build targets **.NET Framework 4.8.1** and was checked on Windows 11 Pro 26H2, build `26300.9711`. The broader upstream minimum is not a promise that every feature works on every Windows edition.
 
-<img width="511" height="355" src="/images/Method2.gif" alt="Image showing you how to perform Method 2" />
+## Validation and limits
 
----
+- Chinese main window starts successfully after the startup fixes.
+- Ten path-parser regression cases pass, including shallow paths, nested paths, ARM64 names, unrelated files, and diff patches.
+- Read-only ViVe queries returned 4,511 runtime and 4,517 boot configurations on the test machine.
+- The configuration change stamp was unchanged across the read-only checks.
 
-## What are the additional features?
-Apart from being able to manage features, ViVeTool GUI let´s you also:
-- Load in a Feature List of other Builds
-- Search for Features 
-- Sort Features by Feature Name, Feature ID or Feature State
-- Group Features by: Always Enabled, Always Disabled, Enabled by Default, Disabled by Default and Modifiable
-- Copy Feature Names and IDs by right-clicking them
-- Switch between Dark and Light Mode (Setting get´s saved and applied on Start)
-- Automatically load the latest Feature List when starting ViVeTool GUI
-- Scan a Windows Build for Hidden Features to create your own Feature List
-- Use ViVeTool GUI in multiple translated Languages
-- Fix the LastKnownGood Store, as well as the A/B Testing Priorities for ViVeTool Features
-- and at last, view the About Box by either pressing on the About Icon, or selecting the "About..." Item in the Application System Menu.
+**Feature writes and a complete scanner run have not been tested for this fork. IoT LTSC has not been tested.** There is no verified claim that this build restores the Settings Home page on IoT LTSC. Updating the core does not create a complete new 26H2 feature-ID catalogue; the build list and dictionary remain upstream data. A successful override does not prove that a feature exists or bypass edition/hardware requirements.
 
-<img width="511" height="175" src="/images/Searching.gif" alt="Image showing you how to search" />
+## Source and build
 
-## What are the System Requirements?
-Since ViVeTool GUI uses the ViVe API, Windows 10 Build 18963 (Version 2004) and newer is the only OS Requirement.
+```text
+ViVe/                         pinned ViVe library, CLI and dictionary source
+vivetool-gui/                 maintained GUI source
+ViVeTool-GUI.FeatureScanner/   maintained scanner source
+Build.ps1                     restores packages and builds CLI, GUI and scanner
+build-tools/verify-readonly.ps1
+```
 
-Apart from that, the only Requirement is .Net Framework 4.8
+Install Visual Studio 2022 Build Tools with .NET desktop build tools and the .NET Framework 4.8.1 targeting pack. Run `./Build.ps1` from PowerShell. The script can also take `-MSBuildPath` and `-NuGetPath`. NuGet packages are restored during the build. The optional `PortableBuild.targets` supports the portable toolchain used for the original local build.
 
-## Why not just use ViVeTool?
-Using ViVeTool GUI is more easier and user-friendly, besides it let's you also search for features and enable them with a few clicks.
+The GUI sources stay in their upstream directories; the pinned ViVe source is added under `ViVe/`. Original authorship and history remain available in Git. See the [development log](DEVELOPMENT_LOG.md) for implementation and validation details.
 
-# Licensing
-ViVeTool GUI uses Icons from [icons8.com](https://icons8.com/)
+## Credits and licensing
 
-ViVeTool GUI is inspired by [ViVeTool](https://github.com/thebookisclosed/ViVe) and uses the [ViVe API](https://github.com/thebookisclosed/ViVe/tree/master/ViVe)
+- GUI and translations: [PeterStrick and contributors](https://github.com/PeterStrick/ViVeTool-GUI).
+- ViVe core and ViVeTool CLI: [thebookisclosed / Albacore and contributors](https://github.com/thebookisclosed/ViVe).
+- Feature lists and scanner tooling: [riverar/mach2](https://github.com/riverar/mach2).
+- Icons: [Icons8](https://icons8.com/).
 
-ViVeTool GUI uses [files](https://github.com/riverar/mach2/tree/master/features) from [mach2](https://github.com/riverar/mach2) for the Build Combo Box.
+Original GPLv3 notices and license texts are retained in `LICENSE`, `ViVe/LICENSE`, and the original GUI copyright notices. **Telerik controls and other third-party dependencies keep their own licenses; they are not relicensed as GPL by this fork.** The GUI uses the Telerik assemblies supplied by the upstream repository. The design-time `.licx` exclusion follows [Telerik's documented build workaround](https://www.telerik.com/products/winforms/documentation/knowledge-base/kb-license-file-licx).
 
-ViVeTool GUI - Feature Scanner uses [mach2](https://github.com/riverar/mach2) to create it's Feature Lists
-
+Changing Windows feature overrides can affect system behavior. Record the original state and only use feature IDs appropriate to your Windows build.

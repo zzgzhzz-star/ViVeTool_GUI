@@ -1,0 +1,26 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Compile satellite assemblies with Roslyn when Windows SDK al.exe is absent. -->
+  <UsingTask TaskName="Microsoft.CodeAnalysis.BuildTasks.Csc" AssemblyFile="$(MSBuildToolsPath)\Roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll" />
+  <Target Name="GenerateSatelliteAssemblies"
+          Inputs="$(MSBuildAllProjects);@(_SatelliteAssemblyResourceInputs);$(IntermediateOutputPath)$(TargetName)$(TargetExt)"
+          Outputs="$(IntermediateOutputPath)%(Culture)\$(TargetName).resources.dll"
+          Condition="'@(_SatelliteAssemblyResourceInputs)' != ''">
+    <MakeDir Directories="@(_SatelliteAssemblyResourceInputs->'$(IntermediateOutputPath)%(Culture)')" />
+    <PropertyGroup>
+      <_SatelliteInfo>$(IntermediateOutputPath)%(_SatelliteAssemblyResourceInputs.Culture)\SatelliteInfo.cs</_SatelliteInfo>
+      <_SatelliteOutput>$(IntermediateOutputPath)%(_SatelliteAssemblyResourceInputs.Culture)\$(TargetName).resources.dll</_SatelliteOutput>
+    </PropertyGroup>
+    <ItemGroup>
+      <_SatelliteAttribute Include="System.Reflection.AssemblyCultureAttribute">
+        <_Parameter1>%(_SatelliteAssemblyResourceInputs.Culture)</_Parameter1>
+      </_SatelliteAttribute>
+      <_SatelliteAttribute Include="System.Reflection.AssemblyVersionAttribute">
+        <_Parameter1>1.7.0.1</_Parameter1>
+      </_SatelliteAttribute>
+    </ItemGroup>
+    <WriteCodeFragment AssemblyAttributes="@(_SatelliteAttribute)" Language="C#" OutputFile="$(_SatelliteInfo)" />
+    <Microsoft.CodeAnalysis.BuildTasks.Csc Resources="@(_SatelliteAssemblyResourceInputs)"
+         Sources="$(_SatelliteInfo)" OutputAssembly="$(_SatelliteOutput)"
+         NoConfig="true" NoLogo="true" TargetType="Library" UseSharedCompilation="false" />
+  </Target>
+</Project>
