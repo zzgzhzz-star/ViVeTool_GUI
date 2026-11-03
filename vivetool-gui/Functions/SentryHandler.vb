@@ -53,7 +53,7 @@ Partial Public Class SentryHandler
     ''' Dispose the Sentry SDK to ensure events are flushed and sent to Sentry
     ''' </summary>
     Public Shared Sub Dispose()
-        _sentry.Dispose()
+        If _sentry IsNot Nothing Then _sentry.Dispose()
     End Sub
 
     ''' <summary>

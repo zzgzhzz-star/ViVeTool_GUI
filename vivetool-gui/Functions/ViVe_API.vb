@@ -43,10 +43,10 @@ Partial Class ViVe_API
             _configs(0) = New RTL_FEATURE_CONFIGURATION_UPDATE() With {
                .FeatureId = ID,
                .EnabledState = State,
-               .EnabledStateOptions = RTL_FEATURE_ENABLED_STATE_OPTIONS.WexpConfig,
+               .EnabledStateOptions = RTL_FEATURE_ENABLED_STATE_OPTIONS.None,
                .[Variant] = ID_Variant,
-               .VariantPayload = ID_Variant,
-               .VariantPayloadKind = RTL_FEATURE_VARIANT_PAYLOAD_KIND.External,
+               .VariantPayload = 0,
+               .VariantPayloadKind = RTL_FEATURE_VARIANT_PAYLOAD_KIND.None,
                .Priority = Priority,
                .Operation = Operation
             }
@@ -181,7 +181,7 @@ Partial Class ViVe_API
         ''' <param name="Store">The Feature Configuration Store to use. Can be either Runtime or Boot</param>
         ''' <returns>A RTL_FEATURE_CONFIGURATION Array</returns>
         Public Shared Function QueryAll(Store As RTL_FEATURE_CONFIGURATION_TYPE) As RTL_FEATURE_CONFIGURATION()
-            Return FeatureManager.QueryAllFeatureConfigurations(Store)
+            Return If(FeatureManager.QueryAllFeatureConfigurations(Store), New RTL_FEATURE_CONFIGURATION() {})
         End Function
 
         ''' <summary>
