@@ -106,6 +106,7 @@ Namespace My
         ''' <param name="sender">Default sender Object</param>
         ''' <param name="e">Unhandled Exception EventArgs</param>
         Private Sub MyApplication_UnhandledException(sender As Object, e As UnhandledExceptionEventArgs) Handles Me.UnhandledException
+            Bootstrap.LogStartupException(e.Exception)
             SentryHandler.ShowSentry(e.Exception)
         End Sub
 

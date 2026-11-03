@@ -1,4 +1,4 @@
-'ViVeTool GUI - Windows Feature Control GUI for ViVeTool
+﻿'ViVeTool GUI - Windows Feature Control GUI for ViVeTool
 'Copyright (C) 2024 Peter Strick
 '
 'This program is free software: you can redistribute it and/or modify
@@ -38,9 +38,7 @@ Public Class GUI
 
 #Region "DEBUG Subs, Functions and Checks"
 
-#If DEBUG Then
     Private Shared EnableDBLoadingForManualTXTLoad As Boolean = False
-#End If
 
     Private Sub __DBG_Load()
         If Diagnostics.Debugger.IsAttached Then
@@ -256,11 +254,11 @@ Public Class GUI
     ''' </summary>
     Private Sub BackgroundTasks()
         ' Check for Updates
-        AutoUpdater.Start("https://raw.githubusercontent.com/PeterStrick/ViVeTool-GUI/master/UpdaterXML.xml")
+        ' Upstream automatic replacement is disabled for this custom build.
 
         ' Check if the Comments DB Server is online
         Invoke(Sub() RLE_StatusLabel.Text = My.Resources.Comments_CheckingAvailabillity)
-        If DatabaseFunctions.ConnectionTest() Then
+        If False Then
             DatabaseFunctions.HasDBAvailable = True
         Else
             DatabaseFunctions.HasDBAvailable = False
@@ -324,36 +322,16 @@ Public Class GUI
             Dim JSONArrayFeatures As JArray = CType(JSONObjectFeatures.SelectToken("tree"), JArray)
 
             For Each element In JSONArrayFeatures
-                Select Case element("path").ToString.Split(CChar(".")).Length
-                    Case 0 ' No File name or Extension. Not used in the Mach2 repo and impossible
-                        ' Do nothing
-                    Case 1 ' Filename; Not used in the Mach2 repo
-                        ' Do nothing
-                    Case 2 ' Filename.Extension; Ex: 22449.txt
-                        If element("path").ToString.Split(CChar("."))(1) = "txt" AndAlso Not element("path").ToString = "features.txt" Then
-                            ' Second If statement checks for features.txt and ignores it
-                            ' The Tag element holds the absolute part, eg: features/rs_prelease/amd64/12345
-                            ' The Text element holds the friendly name, eg: 12345
-                            Dim item As New RadListDataItem With {
-                                .Tag = element("path").ToString.Split(CChar("."))(0),
-                                .Text = element("path").ToString.Split(CChar("/"))(3).ToString.Split(CChar("."))(0)
-                            }
-                            Invoke(Sub() RDDL_Build.Items.Add(item))
-                        End If
-                    Case 3 ' File.File.Extension; Ex: 22000.1.txt or 22449_22454_diff.patch
-                        If element("path").ToString.Split(CChar("."))(2) = "txt" Then
-                            Dim item As New RadListDataItem With {
-                                .Tag = element("path").ToString.Split(CChar("."))(0) & "." & element("path").ToString.Split(CChar("."))(1),
-                                .Text = element("path").ToString.Split(CChar("/"))(3).Split(CChar("."))(0) & "." & element("path").ToString.Split(CChar("."))(1)
-                            }
-                            Invoke(Sub() RDDL_Build.Items.Add(item))
-                        End If
-                    Case 4 ' File.File.File.Extension; Ex: 18980.1_18985.1_diff.patch. Usually used for Diffs in the Mach2 Repo
-                        ' Do Nothing
-                End Select
+                Dim repositoryPath = CStr(element("path"))
+                Dim buildName = BuildListParser.GetBuildName(repositoryPath)
+                If buildName Is Nothing OrElse CStr(element("type")) <> "blob" Then Continue For
+                Dim item As New RadListDataItem With {
+                    .Tag = repositoryPath.Substring(0, repositoryPath.Length - 4),
+                    .Text = buildName
+                }
+                Invoke(Sub() RDDL_Build.Items.Add(item))
             Next
-
-            Invoke(Sub()
+        Invoke(Sub()
                        ' De-select any Item
                        RDDL_Build.SelectedIndex = -1
 
@@ -368,7 +346,9 @@ Public Class GUI
                    End Sub)
 
             ' Auto-load the newest Build if it is Enabled in the Settings
-            If My.Settings.AutoLoad = "latest" Then Invoke(Sub() RDDL_Build.SelectedItem = RDDL_Build.Items.Item(2))
+            If My.Settings.AutoLoad = "latest" Then Invoke(Sub()
+                If RDDL_Build.Items.Count > 2 Then RDDL_Build.SelectedItem = RDDL_Build.Items.Item(2)
+            End Sub)
 
             ' Auto-load the current Build if it is Enabled in the Settings, and available
             If My.Settings.AutoLoad = "current" Then
@@ -395,7 +375,7 @@ Public Class GUI
                                    If Index = -1 Then
                                        Index = RDDL_Build.FindString(CStr(Environment.OSVersion.Version.Build).Split(CChar("."))(0))
                                    End If
-                               Case Architecture.X64 Or Architecture.X86
+                               Case Architecture.X64, Architecture.X86
                                    ' Look if a Build with Subbuild for x86_64 exists
                                    Index = RDDL_Build.FindStringExact(CStr(Environment.OSVersion.Version.Build))
 
@@ -542,7 +522,7 @@ Public Class GUI
 
         ' Move to the first row, remove the selection and change the Status Label to Done.
         Invoke(Sub()
-                   RGV_MainGridView.CurrentRow = RGV_MainGridView.Rows.Item(0)
+                   If RGV_MainGridView.Rows.Count > 0 Then RGV_MainGridView.CurrentRow = RGV_MainGridView.Rows.Item(0)
                    RGV_MainGridView.CurrentRow = Nothing
                    RLE_StatusLabel.Text = My.Resources.Generic_Done
                End Sub)
@@ -628,7 +608,7 @@ Public Class GUI
                 Next
                 ' Move to the first row, remove the selection and change the Status Label to Done.
                 Invoke(Sub()
-                           RGV_MainGridView.CurrentRow = RGV_MainGridView.Rows.Item(0)
+                           If RGV_MainGridView.Rows.Count > 0 Then RGV_MainGridView.CurrentRow = RGV_MainGridView.Rows.Item(0)
                            RGV_MainGridView.CurrentRow = Nothing
                            RLE_StatusLabel.Text = My.Resources.Generic_Done
                        End Sub)
@@ -790,7 +770,7 @@ Public Class GUI
 
                 ' Move to the first row, remove the selection and change the Status Label to Done.
                 Invoke(Sub()
-                           RGV_MainGridView.CurrentRow = RGV_MainGridView.Rows.Item(0)
+                           If RGV_MainGridView.Rows.Count > 0 Then RGV_MainGridView.CurrentRow = RGV_MainGridView.Rows.Item(0)
                            RGV_MainGridView.CurrentRow = Nothing
                            RLE_StatusLabel.Text = My.Resources.Generic_Done
                        End Sub)
